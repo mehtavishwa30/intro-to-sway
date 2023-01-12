@@ -79,9 +79,9 @@ On top of this, anyone can interact with the contract. This means that anyone ca
 We can start by creating a new folder called `sway-store`, and making a new contract called `sway-store-contract`. 
 
 ```bash
-$ mkdir sway-store
-$ cd sway-store
-$ forc new sway-store-contract
+mkdir sway-store
+cd sway-store
+forc new sway-store-contract
 ```
 
 Open up the `sway-store-contract` folder in VS Code, and inside the `src` folder you should see a file called `main.sw`. This is where you will write your Sway contract. You can delete everything in this file.
