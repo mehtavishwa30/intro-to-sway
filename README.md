@@ -1,100 +1,150 @@
-# Intro to Sway for JS Devs
+# Intro to Sway: A reference Guide for JS Devs
 
-If you know JavaScript, you can quickly learn to build full-stack dapps, or decentralized applications, on Fuel with Sway. Once you learn some Sway fundamentals, you'll be ready to start building your own dapp.
+If you know JavaScript, you can effectively learn how to build fullstack dapps (decentralized applications) on Fuel with Sway. Once you learn the fundamentals of Sway language, you can start building and deploying your own fullstack dapps on Fuel.
 
-## TLDR
+## TL;DR
 
-A Sway contract for a decentralized Amazon-like marketplace.
+Intro to Sway is a reference guide to teach JavaScript developers how to wrtie a smart contract for a decentralized Amazon-like marketplace in Sway.
 
-Make sure you have the Rust and Fuel toolchains installed. Install the beta-2 toolchain distribution and set it as your default.
+## Trying out the Intro to Sway contract
 
-You can build the Sway contract with `forc build`.
-
-To run the tests in `harness.rs`, use `cargo test`. To print to the console from the tests, use `cargo test -- --nocapture`.
+* Make sure you have the `Rust` and `Fuel` toolchains installed. [Learn](https://fuellabs.github.io/sway/v0.33.1/book/introduction/installation.html) how to install the beta-2 toolchain distribution and set it as your default.
+* Clone this repository and build the Intro to Sway smart contract by running `cd intro-to-sway` and `forc build` in your code editor.
+* Run the tests in `harness.rs` by running the `cargo test` command.
+* Print to the console from the tests, use `cargo test -- --nocapture`.
 
 ## What is Sway?
 
-Sway is a strongly-typed programming language based on Rust used to write smart contracts on the Fuel blockchain. It inherits Rust's performance, control, and safety to use in a blockchain virtual machine environment optimized for gas costs and contract safety. 
+Sway is a strongly-typed programming language inspired by Rust. Sway can be used to write and deploy smart contracts on the Fuel blockchain. It inherits Rust's performance, control, and safety to use in a blockchain virtual machine environment optimized for gas costs and contract safety. 
 
 Sway is backed by a powerful compiler and toolchain that work to abstract away complexities and ensure that your code is working, safe, and performant. 
 
 Part of what makes Sway so unique is the fantastic suite of tools surrounding it that help you turn a contract into a full-stack dapp:
 
-
 - 📚 Sway Standard Library: A native library of helpful types and methods.
-
 - 🧰 Forc: The Fuel toolbox that helps you build, deploy, and manage your Sway projects.
-
 - 🧑‍🔧 Fuelup: The official Fuel toolchain manager helps you install and manage versions. 
-
 - 🦀 Fuels Rust SDK: Test and interact with your Sway contract with Rust.
-
 - ⚡ Fuels Typescript SDK: Test and interact with your Sway contract with TypeScript.
-
 - 🔭 Fuel Indexer: Easily make your own indexer to organize and query on-chain data.
 
-You can use Sway to write contracts, scripts, predicates, and libraries for the Fuel network.
+## Sway Program Types
 
-- 💼 A contract is a set of functions with persistent state that can be deployed on a blockchain. Once deployed, the contract lives on the blockchain and can never be changed or deleted. Anyone can access the state or call public functions without permission. 
+- 💼 `Contracts`: A contract is a set of functions with persistent state that can be deployed on a blockchain. Once deployed, the contract lives on the blockchain and can never be changed or deleted. Anyone can access the state or call public functions without permission. 
 
-- 📋 A script is a function that gets compiled into bytecode and passed into a transaction to be executed. It cannot be deployed or called like a contract and cannot store persistent state.
+- 📋 `Scripts`: A script is a function that gets compiled into bytecode and passed into a transaction to be executed. It cannot be deployed or called like a contract and cannot store persistent state.
 
-- 🔐 A predicate is a pure function that can return true or false, and is sent inside a transaction as bytecode and checked at transaction validity time. If it evaluates to false the transaction will not be processed, and no gas will be used. If it evaluates to true, any coins belonging to the address equal to the Merkle root of the predicate bytecode may be spent by the transaction.
+- 🔐 `Predicates`: A predicate is a pure function that can return true or false, and is sent inside a transaction as bytecode and checked at transaction validity time. If it evaluates to false the transaction will not be processed, and no gas will be used. If it evaluates to true, any coins belonging to the address equal to the Merkle root of the predicate bytecode may be spent by the transaction.
 
-- 📗 A library is a set of shareable code that can be used in a contract, script, or predicate.
+- 📗 `Libraries`: A library is a set of shareable code that can be used within a contract, a script, or a predicate.
 
-## Dev Setup
+## Getting Started
 
-Before diving into any Sway code, ensure you have installed the following dependencies.
-
-Start by installing the [Rust toolchain](https://www.rust-lang.org/tools/install).
-
-Then, install the [Fuel toolchain](https://github.com/FuelLabs/fuelup).
-
-Install the beta-2 toolchain distribution and set it as your default with:
+1. Install the [Rust toolchain](https://www.rust-lang.org/tools/install). To download `Rustup` and install `Rust`, run the following in your terminal, then follow the on-screen instructions:
 
 ```bash
-$ fuelup toolchain install beta-2
-$ fuelup default beta-2
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
 
-You can check to see the current toolchain version installed by running the following:
+2. Install the [Fuel toolchain](https://github.com/FuelLabs/fuelup) by installing `fuelup`, the `rustup` equivalent for Fuel, that lets you download binary releases of the Fuel toolchain as follows:
 
 ```bash
-$ fuelup show
+curl --proto '=https' --tlsv1.2 -sSf \ https://fuellabs.github.io/fuelup/fuelup-init.sh | sh
 ```
 
-Next, add the [Sway extension](https://marketplace.visualstudio.com/items?itemName=FuelLabs.sway-vscode-plugin) to your VS Code.
+3. Install the beta-2 toolchain distribution and set it as your default by running the following:
 
-## Writing a Contract
+```bash
+fuelup toolchain install beta-2
+fuelup default beta-2
+```
 
-> This example uses the `beta-2` toolchain, which is version `0.31.1` of `forc` and version `0.14.1` of `fuel-core`.
+4. Check the current toolchain version installed by running the following:
 
-Let's make a Sway contract for an online marketplace like Amazon, where sellers can list products, buyers can buy them, and the marketplace takes a cut of each purchase.
+```bash
+fuelup show
+```
 
-Part of what makes smart contracts so powerful is that they are immutable and permissionless. This means that unless you build a function to remove an item or block certain users, no one will be able to delist any item or deny any users. Likewise, if we hard-code a commission amount in the contract, no one can ever change the commission taken for products. 
+It will show an output similar to the following:
 
-On top of this, anyone can interact with the contract. This means that anyone can make a frontend for your contract without permission, and contracts can interact with any number of frontends.
+```bash
+Default host: aarch64-apple-darwin
+fuelup home: $home/.fuelup
 
-We can start by creating a new folder called `sway-store`, and making a new contract called `sway-store-contract`. 
+installed toolchains
+--------------------
+beta-2-aarch64-apple-darwin (default)
+
+active toolchain
+----------------
+beta-2-aarch64-apple-darwin (default)
+  forc : 0.33.1
+    - forc-client
+      - forc-deploy : 0.33.1
+      - forc-run : 0.33.1
+    - forc-doc : 0.33.1
+    - forc-explore - not found
+    - forc-fmt : 0.33.1
+    - forc-index - not found
+    - forc-lsp : 0.33.1
+    - forc-wallet : 0.1.2
+```
+
+5. Finally, add the [Sway extension](https://marketplace.visualstudio.com/items?itemName=FuelLabs.sway-vscode-plugin) to your VS Code.
+
+## Writing your first Sway Contract
+
+> 💡 Note: This example uses the `beta-2` toolchain, which is version `0.31.1` of `forc` and version `0.14.1` of `fuel-core`.
+
+In this guide, you will learn how to write a Sway contract for an online Amazon-like marketplace. It will have the following functionality:
+* Sellers can list products
+* Buyers can buy from the listed items
+* The marketplace takes a cut out of each purchase
+
+Smart contracts are powerful programs because of their immutable and permissionless nature. Unless you build a function to remove an item or block certain users, it is not possible to delist already listed items or deny access to users. Similarly, if you hard-code a commission amount for the marketplace in the contract, no one can alter the commission amount. 
+
+Additionally, anyone can interact with the contract. This means that anyone can build a frontend for your contract without needing your permission and contracts can interact with any number of frontends.
+
+Now that you've set up your development environment and learned about contracts, let's write your first contract in Sway!
+
+### Initialise
+
+1. Create a new smart contract folder called `sway-store` using `forc` and move into the `sway_store` directory as follows:
 
 ```bash
 mkdir sway-store
 cd sway-store
+```
+
+2. Initialise a new smart contract called `sway-store-contract` folder by running the following:
+
+```bash
 forc new sway-store-contract
 ```
 
-Open up the `sway-store-contract` folder in VS Code, and inside the `src` folder you should see a file called `main.sw`. This is where you will write your Sway contract. You can delete everything in this file.
+3. Open the `sway-store-contract` folder in VS Code. You will see the following folder structure:
 
-The first line of the file is specially reserved to let the compiler know if we are writing a contract, script, predicate, or library. To define the file as a contract, use the `contract` keyword.
+```toml
+. sway-store-contract
+├── Forc.toml
+└── src
+    └── main.sw
+```
+
+Let's take a look at each generated file:
+* `Forc.toml`: The manifest file for your smart contract (similar to package.json for Node.js) that defines the project metadata
+* `src`: The main source directory where all your Sway program files are located
+* `main.sw`: The main Sway smart contract file where you will be writing your code
+
+### Let's write some code!
+
+1. **Program type Declaration**: Every Sway smart contract file must begin by declaring that this file is a contract, as follows:
 
 ```rust
 contract;
 ```
 
-### Imports
-
-The Sway standard library provides several utility types and methods we can use in our contract. To import a library, you can use the `use` keyword and `::`, also called a namespace qualifier, to chain library names like this:
+2. **Importing dependencies**: The Sway standard library provides several utility types and methods we can use in our contract. To import a library, you can use the `use` keyword and `::`, also called a namespace qualifier, to chain library names like this:
 
 ```rust
 // imports the Address type from the std library
@@ -110,7 +160,7 @@ use std::{
 }
 ```
 
-For this contract, here is what needs to be imported:
+Learn more about libraries in Sway [here](https://fuellabs.github.io/sway/v0.33.1/book/sway-program-types/libraries.html)! For your contract, let's import the following libraries:
 
 ```rust
 use std::{
@@ -132,15 +182,14 @@ use std::{
     token::transfer,
 };
 ```
-We'll go through what each of these imports does as we use them later.
 
-### Item Struct
+Let's come back to what each of these imports does as you use them later on in the guide.
 
-Struct is short for structure, which is a data structure similar to an object in JavaScript. You define a struct with the `struct` keyword and define the fields of a struct inside curly brackets.
+3. **Item Struct**: Struct is short for structure, which is a data structure similar to an object in JavaScript. You can create a struct with the `struct` keyword and define the fields of a struct inside curly brackets.
 
-The core of our program is the ability to list, sell, get, etc. `items`.
+The core of your program is the ability to list, sell, and get `items`.
 
-You can define the `Item` type as shown below:
+Let's define the `Item` type as shown below:
 
 ```rust
 struct Item {
@@ -154,31 +203,26 @@ struct Item {
 
 The item struct will hold an ID, price, the owner's identity, a string for a URL or identifier where off-chain data about the item is stored (such as the description and photos), and a counter for the total number of purchases.
 
-#### Types
-
-The `Item` struct uses three types: `u64`, `str[20]`, and `Identity`.
+4. **Types**: The `Item` struct uses three types: `u64`, `str[20]`, and `Identity`.
 
 `u64`: a 64-bit unsigned integer
 
 In Sway, there are four native types of numbers:
-- `u8`: an 8-bit unsigned integer
-- `u16` a 16-bit unsigned integer
-- `u32` a 32-bit unsigned integer
-- `u64`: a 64-bit unsigned integer
+* `u8`: An 8-bit unsigned integer
+* `u16`: A 16-bit unsigned integer
+* `u32`: A 32-bit unsigned integer
+* `u64`: A 64-bit unsigned integer
 
 An unsigned integer means there is no `+` or `-` sign, so the value is always positive. `u64` is the default type used for numbers in Sway. To use other number types, for example [`u256`](https://github.com/FuelLabs/sway/blob/master/sway-lib-std/src/u256.sw) or [signed integers](https://github.com/FuelLabs/sway-libs/tree/master/sway_libs/src/signed_integers), you must import them from a library.
 
-In JavaScript, there are two types of integers: a number and a BigInt. The main difference between these types is that BigInt can store a much larger value. Similarly, each number type for Sway has different values for the largest number that can be stored.
+In JavaScript, there are two types of integers: A number and a BigInt. The main difference between these types is that BigInt can store a much larger value. Similarly, each number type for Sway has different values for the largest number that can be stored.
 
-`str[20]`: a string with exactly 20 characters. All strings in Sway must have a fixed length. 
+* `str[20]`: a string with exactly 20 characters. All strings in Sway must have a fixed length. 
+* `Identity`: an enum type that represents either a user's `Address` or a `ContractId`. We already imported this type from the standard library earlier.
 
-`Identity`: an enum type that represents either a user's `Address` or a `ContractId`. We already imported this type from the standard library earlier.
+5. **ABI Definition**: Next, let's learn how to define your ABI. ABI stands for 'Application Binary Interface'. In a Sway contract, it's an outline of all of the functions in the contract. For each function, you must specify its name, input types, return types, and the level of storage access.
 
-### ABI
-
-Next, we will define our ABI. ABI stands for application binary interface. In a Sway contract, it's an outline of all of the functions in the contract. For each function, you must specify its name, input types, return types, and level of storage access. 
-
-Our contract's ABI will look like this:
+Your ABI definition should look like this:
 
 ```rust
 abi SwayStore {
@@ -206,19 +250,19 @@ abi SwayStore {
 }
 ``` 
 
-#### Functions
+6. **Function definition**: A function in Sway is defined with the `fn` keyword. Some syntax rules to keep in mind:
 
-A function is defined with the `fn` keyword. Sway uses snake case, so instead of naming a function `myFunction`, you would use `my_function`.
+* Since Sway uses snake case, instead of naming a function `myFunction`, you must name it as `my_function`.
+* You must also define the return type using a skinny arrow (->) if the function returns anything.
+* If the function has any parameters, you must define their type in the function definition.
+* Semicolons are *required* at the end of each line.
+* If any function reads from or writes to storage, you must define that level of access above the function with either `#[storage(read)]` or `#[storage(read, write)]`.
 
-You must define the return type using a skinny arrow if the function returns anything. If there are any parameters, the types must also be defined for those. Semicolons are *required* at the end of each line.
+For reference, see the function definitions within the ABI above.
 
-If any function reads from or writes to storage, you must define that level of access above the function with either `#[storage(read)]` or `#[storage(read, write)]`.
+7. **Storage Block**: Next, let's add a storage block in which you can store any state variables for your contract that you want to store in a persistent storage. Any Sway primitive type can be stored in storage blocks.
 
-### Storage Block
-
-Next, we can add the storage block. The storage block is where you can store any state variables in your contract that you want to be persistent. Any Sway primitive type can be stored in the storage block.
-
-Any variables declared inside a function and not saved in the storage block will be destroyed when the function finishes executing.
+Variables declared inside a function and not saved in the storage block will be destroyed when the function finishes executing.
 
 ```rust
 storage {
@@ -235,8 +279,7 @@ storage {
 
 The first variable we have stored is `item_counter`, a number initialized to 0. You can use this counter to track the total number of items listed.
 
-#### StorageMap
-A StorageMap is a special type that allows you to save key-value pairs inside a storage block. 
+8. **StorageMap**: A StorageMap is a special type that allows you to save key-value pairs inside a storage block. 
 
 To define a storage map, you must specify the type for the key and value. For example, below, the type for the key is `u64`, and the type for the value is an `Item` struct.
 
